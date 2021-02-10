@@ -61,7 +61,8 @@ const checkAndCreateModelDir = async (filePath: string) => {
       RNFetchBlob.fs.mkdir(filePath);
     }
   } catch (error) {
-    console.error(`Create Model Dir ${error}`);
+    // console.error(`Create Model Dir ${error}`);
+    throw new Error(`Failed to Create directory ${error}`);
   }
 };
 
