@@ -1,15 +1,11 @@
 import * as tf from '@tensorflow/tfjs';
 
 const ip = '192.168.1.106';
-const defaultModelURL = `http://${ip}:8001/model.json`;
 const defaultModelName = 'default-model';
 
 import {DiskStorageIO} from './RNFSStorage';
 
-const loadFromNetwork = async (
-  modelUrl = defaultModelURL,
-  isLayersModel = true,
-) => {
+const loadFromNetwork = async (modelUrl: string, isLayersModel = true) => {
   if (isLayersModel) {
     const model = await tf.loadLayersModel(modelUrl);
     return model;
