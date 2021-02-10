@@ -27,8 +27,8 @@ import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 
 import {loadFromDisk, loadFromNetwork, saveModelToDisk} from './src/model';
-const defaultModelUrl = 'http://192.168.1.106:8003/walmart_hindi-complete-graph_model-sharded/model.json';
-const defaultModelName = 'voyceworks_walmart-complete';
+const defaultModelUrl = 'http://192.168.1.106:8003/walmart_hindi-complete/model.json';
+const defaultModelName = 'layer-model-1';
 
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -37,13 +37,14 @@ declare const global: {HermesInternal: null | {}};
 const App = () => {
   const [isTfReady, setIsTfReady] = useState<boolean>(false);
   const [model, setModel] = useState<tf.GraphModel | tf.LayersModel>();
-
-  const [disableAllBtns, setDisableAllBtns] = useState<boolean>(false);
   const [modelAvailable, setModelAvailable] = useState<boolean>(false);
-  const [textView, setTextView] = useState<string>('');
   const [modelName, setModelName] = useState<string>(defaultModelName);
   const [modelURL, setModelURL] = useState(defaultModelUrl);
-  const [isLayersModel, setIsLayersModel] = useState(false);
+  const [isLayersModel, setIsLayersModel] = useState(true);
+
+  const [disableAllBtns, setDisableAllBtns] = useState<boolean>(false);
+  const [textView, setTextView] = useState<string>('');
+
   const toggleSwitch = () =>
     setIsLayersModel((previousState) => !previousState);
 
@@ -79,12 +80,10 @@ const App = () => {
       let tock = Date.now();
 
       setModel(modelFromNW);
-
       setTextView(`Time to fetch from NW: ${tock - tick} ms`);
     } catch (error) {
-      console.error(error);
+      setTextView(error.toString());
     }
-
     setDisableAllBtns(false);
   };
 
@@ -100,7 +99,7 @@ const App = () => {
 
       setTextView(`Time to load model from disk : ${tock - tick} ms`);
     } catch (error) {
-      console.error(`Load Model from disk ${error}`);
+      setTextView(error.toString());
     }
 
     setDisableAllBtns(false);
@@ -110,7 +109,7 @@ const App = () => {
     setDisableAllBtns(true);
 
     if (!model) {
-      console.error('Model underfined');
+      setTextView('Model undefined');
       setDisableAllBtns(false);
       return;
     }
@@ -122,7 +121,7 @@ const App = () => {
 
       setTextView(`Time to save model to disk : ${tock - tick} ms`);
     } catch (error) {
-      console.error(error);
+      setTextView(error.toString());
     }
 
     setDisableAllBtns(false);
@@ -140,23 +139,27 @@ const App = () => {
       'tensorflowjs_models',
     ].join(PATH_SEPARATOR);
 
-    const dirs = (await RNFetchBlob.fs.lstat(dirPath)).filter(
-      (res) => res.type === 'directory',
-    );
-
     let text = [];
 
-    for (let dir of dirs) {
-      const filesInDir = await RNFetchBlob.fs.lstat(dir.path);
+    try {
+      const dirs = (await RNFetchBlob.fs.lstat(dirPath)).filter(
+        (res) => res.type === 'directory',
+      );
 
-      const filesInfoText = filesInDir.map((file) => {
-        return ` -----> ${file.filename}: ${file.size} B`;
-      });
+      for (let dir of dirs) {
+        const filesInDir = await RNFetchBlob.fs.lstat(dir.path);
 
-      text.push([` -> ${dir.filename}`, ...filesInfoText].join('\n'));
+        const filesInfoText = filesInDir.map((file) => {
+          return ` -----> ${file.filename}: ${file.size} B`;
+        });
+
+        text.push([` -> ${dir.filename}`, ...filesInfoText].join('\n'));
+      }
+
+      setTextView(text.join('\n\n'));
+    } catch (error) {
+      setTextView(error.toString());
     }
-
-    setTextView(text.join('\n\n'));
   };
 
   return (
