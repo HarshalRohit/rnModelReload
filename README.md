@@ -1,6 +1,8 @@
 # Example project to use model-management functions
 ## Description
-The project demos the functions exposed by `model.ts`
+The project demos the functions exposed by `model.ts`.
+
+The models are served over the [url](https://srivalab-compute.cse.iitk.ac.in:5040/ml_models/) 
 
 ## Information
 + Only `https` urls works.
@@ -17,9 +19,4 @@ npm start
 ### Run the android app
 ```shell
 npm run-android
-```
-
-### Serve the ml models
-```shell
-npm serve-models
 ```
