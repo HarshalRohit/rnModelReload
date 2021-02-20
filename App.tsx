@@ -26,13 +26,14 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
 
-import {loadFromDisk, loadFromNetwork, saveModelToDisk} from './src/model';
-const defaultModelUrl = 'http://192.168.1.106:8003/walmart_hindi-complete/model.json';
-const defaultModelName = 'layer-model-1';
-
 import RNFetchBlob from 'rn-fetch-blob';
 
+import {loadFromDisk, loadFromNetwork, saveModelToDisk} from './src/model';
+
 declare const global: {HermesInternal: null | {}};
+
+const defaultModelUrl = 'https://srivalab-compute.cse.iitk.ac.in:5040/ml_models/layers_model//model.json';
+const defaultModelName = 'layers-model-1';
 
 const App = () => {
   const [isTfReady, setIsTfReady] = useState<boolean>(false);
@@ -126,11 +127,6 @@ const App = () => {
 
     setDisableAllBtns(false);
   };
-
-  /* const removeModelFromDisk = async () => {
-    const modelPath = `${RNFetchBlob.fs.dirs.DocumentDir}/tensorflowjs_models/voyceworks_walmart-complete`;
-    RNFetchBlob.fs.unlink(modelPath);
-  }; */
 
   const listFilesInAppStorage = async () => {
     const PATH_SEPARATOR = '/';
